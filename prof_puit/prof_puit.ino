@@ -1,6 +1,6 @@
 #include <SPI.h>
 
-int pin_clock = 16;
+int pin_clock = 3;
 
 void resetsensor() { //this function keeps the sketch a little shorter
   SPI.setDataMode(SPI_MODE0);
@@ -11,26 +11,22 @@ void resetsensor() { //this function keeps the sketch a little shorter
 
 void setup(void) {
   Serial.begin(9600);
-  Serial.println("debut setup");
-  SPI.begin(); //see SPI library details on arduino.cc for details
-  Serial.println("begin");
-  SPI.setBitOrder(MSBFIRST);
-  Serial.println("order");
-  SPI.setClockDivider(SPI_CLOCK_DIV32); //divide 16 MHz to communicate on 500 kHz
-  Serial.println("divide");
+  
+  //SPI.begin(); //see SPI library details on arduino.cc for details
+  //SPI.setBitOrder(MSBFIRST);
+  //SPI.setClockDivider(SPI_CLOCK_DIV64); //divide 16 MHz to communicate on 500 kHz
+  SPI.beginTransaction(SPISettings(500000,MSBFIRST,SPI_MODE0));
   pinMode(pin_clock, OUTPUT);
-  Serial.println("output");
-  delay(1000);
-  Serial.println("fin setup");
+  delay(100);
 }
 
 void loop(void) {
-  Serial.println("debut loop");
+  
   //TCCR1B = (TCCR1B & 0xF8) | 1 ; //generates the MCKL signal
   analogWrite (pin_clock, 128) ;
   resetsensor();//resets the sensor - caution: afterwards mode = SPI_MODE0!
 
-  Serial.println("word1");
+  
   //Calibration word 1
   unsigned int word1 = 0;
   unsigned int word11 = 0;
@@ -41,9 +37,10 @@ void loop(void) {
   word1 = word1 << 8; //shift returned byte
   word11 = SPI.transfer(0x00); //send dummy byte to read second byte of word
   word1 = word1 | word11; //combine first and second byte of word
+  Serial.print("word1: ");
+  Serial.println(word1);
   resetsensor();//resets the sensor
 
-  Serial.println("word2");
   //Calibration word 2; see comments on calibration word 1
   unsigned int word2 = 0;
   byte word22 = 0;
@@ -54,6 +51,8 @@ void loop(void) {
   word2 = word2 << 8;
   word22 = SPI.transfer(0x00);
   word2 = word2 | word22;
+  Serial.print("word2: ");
+  Serial.println(word2);  
   resetsensor();//resets the sensor
 
   //Calibration word 3; see comments on calibration word 1
@@ -66,6 +65,8 @@ void loop(void) {
   word3 = word3 << 8;
   word33 = SPI.transfer(0x00);
   word3 = word3 | word33;
+  Serial.print("word3: ");
+  Serial.println(word3);
   resetsensor();//resets the sensor
 
   //Calibration word 4; see comments on calibration word 1
@@ -78,6 +79,8 @@ void loop(void) {
   word4 = word4 << 8;
   word44 = SPI.transfer(0x00);
   word4 = word4 | word44;
+  Serial.print("word4: ");
+  Serial.println(word4);  
 
   long c1 = word1 << 1;
   long c2 = ((word3 & 0x3F) >> 6) | ((word4 & 0x3F));
