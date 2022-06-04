@@ -12,17 +12,17 @@ void resetsensor() { //this function keeps the sketch a little shorter
 void setup(void) {
   Serial.begin(9600);
   
-  //SPI.begin(); //see SPI library details on arduino.cc for details
-  //SPI.setBitOrder(MSBFIRST);
-  //SPI.setClockDivider(SPI_CLOCK_DIV64); //divide 16 MHz to communicate on 500 kHz
-  SPI.beginTransaction(SPISettings(500000,MSBFIRST,SPI_MODE0));
+  SPI.begin(); //see SPI library details on arduino.cc for details
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setClockDivider(SPI_CLOCK_DIV128); //divide 16 MHz to communicate on 500 kHz
+  
   pinMode(pin_clock, OUTPUT);
   delay(100);
 }
 
 void loop(void) {
   
-  //TCCR1B = (TCCR1B & 0xF8) | 1 ; //generates the MCKL signal
+  TCCR1B = (TCCR1B & 0xF8) | 1 ; //generates the MCKL signal
   analogWrite (pin_clock, 128) ;
   resetsensor();//resets the sensor - caution: afterwards mode = SPI_MODE0!
 
@@ -88,6 +88,21 @@ void loop(void) {
   long c4 = (word3 << 6);
   long c5 = (word2 << 6) | ((word1 & 0x1) >> 10);
   long c6 = word2 & 0x3F;
+
+  Serial.print("c1: ");
+  Serial.println(c1);  
+  Serial.print("c2: ");
+  Serial.println(c2);  
+  Serial.print("c3: ");
+  Serial.println(c3);  
+  Serial.print("c3: ");
+  Serial.println(c3);    
+  Serial.print("c4: ");
+  Serial.println(c4);  
+  Serial.print("c5: ");
+  Serial.println(c5);
+  Serial.print("c6: ");
+  Serial.println(c6);  
   resetsensor();//resets the sensor
 
   //Temperature:
