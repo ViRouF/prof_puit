@@ -1,6 +1,6 @@
 #include <SPI.h>
 
-int pin_clock = 9;
+int pin_clock = 16;
 
 void resetsensor() { //this function keeps the sketch a little shorter
   SPI.setDataMode(SPI_MODE0);
@@ -20,7 +20,7 @@ void setup(void) {
   Serial.println("divide");
   pinMode(pin_clock, OUTPUT);
   Serial.println("output");
-  delay(100);
+  delay(1000);
   Serial.println("fin setup");
 }
 
