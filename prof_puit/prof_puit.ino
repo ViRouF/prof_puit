@@ -20,7 +20,7 @@ void setup(void) {
   delay(100);
 }
 
-void printWord(unsigned int wordX, const char* wordName){
+void printValue(unsigned int wordX, const char* wordName){
   Serial.print(wordName);
   Serial.print(" : ");
   Serial.print(wordX);
@@ -45,7 +45,7 @@ void loop(void) {
   word1 = word1 << 8; //shift returned byte
   word11 = SPI.transfer(0x00); //send dummy byte to read second byte of word
   word1 = word1 | word11; //combine first and second byte of word
-  printWord(word1, "word1");
+  printValue(word1, "word1");
   resetsensor();//resets the sensor
 
   //Calibration word 2; see comments on calibration word 1
@@ -58,7 +58,7 @@ void loop(void) {
   word2 = word2 << 8;
   word22 = SPI.transfer(0x00);
   word2 = word2 | word22;
-  printWord(word2, "word2");
+  printValue(word2, "word2");
   resetsensor();//resets the sensor
 
   //Calibration word 3; see comments on calibration word 1
@@ -71,7 +71,7 @@ void loop(void) {
   word3 = word3 << 8;
   word33 = SPI.transfer(0x00);
   word3 = word3 | word33;
-  printWord(word3, "word3");
+  printValue(word3, "word3");
   resetsensor();//resets the sensor
 
   //Calibration word 4; see comments on calibration word 1
@@ -84,7 +84,7 @@ void loop(void) {
   word4 = word4 << 8;
   word44 = SPI.transfer(0x00);
   word4 = word4 | word44;
-  printWord(word4, "word4");
+  printValue(word4, "word4");
 
   long c1 = (word1 >> 1) & 0x7FFF;
   long c2 = ((word3 & 0x003F) << 6) | (word4 & 0x003F);
@@ -93,12 +93,12 @@ void loop(void) {
   long c5 = ((word1 & 0x0001) << 10) | ((word2 >> 6) & 0x03FF);
   long c6 = word2 & 0x003F;
 
-  printWord(c1, "c1");
-  printWord(c2, "c2");
-  printWord(c3, "c3");
-  printWord(c4, "c4");
-  printWord(c5, "c5");
-  printWord(c6, "c6");    
+  printValue(c1, "c1");
+  printValue(c2, "c2");
+  printValue(c3, "c3");
+  printValue(c4, "c4");
+  printValue(c5, "c5");
+  printValue(c6, "c6");    
   
   resetsensor();//resets the sensor
 
@@ -114,9 +114,7 @@ void loop(void) {
   presMSB = presMSB << 8; //shift first byte
   presLSB = SPI.transfer(0x00); //send dummy byte to read second byte of value
   D1 = presMSB | presLSB;
-  Serial.print("D1 - Pressure raw = ");
-  Serial.println(D1);  
-  Serial.println(D1,BIN);  
+  printValue(D1,"D1");
   resetsensor();//resets the sensor
   
   //Temperature:
@@ -131,9 +129,7 @@ void loop(void) {
   tempMSB = tempMSB << 8; //shift first byte
   tempLSB = SPI.transfer(0x00); //send dummy byte to read second byte of value
   D2 = tempMSB | tempLSB; //combine first and second byte of value
-  Serial.print("D2 - Temperature raw = ");
-  Serial.println(D2); //voila!  
-  Serial.println(D2,BIN);  
+  printValue(D2,"D2");
   resetsensor();//resets the sensor
 
 
@@ -151,28 +147,16 @@ void loop(void) {
   float TEMPREAL = TEMP/10;
   float PCOMPHG = PCOMP * 750.06 / 10000; // mbar*10 -> mmHg === ((mbar/10)/1000)*750/06
   
-  
-  Serial.print("UT1 = ");
-  Serial.println(UT1);
-  Serial.print("dT = ");
-  Serial.println(dT);
-  Serial.print("TEMP = ");
-  Serial.println(TEMP);
-  Serial.print("OFFP = ");
-  Serial.println(OFF);
-  Serial.print("SENS = ");
-  Serial.println(SENS);
-  Serial.print("X = ");
-  Serial.println(X);
-  
+  printValue(UT1,"UT1");
+  printValue(dT,"dT");
+  printValue(TEMP,"TEMP");
+  printValue(OFF,"OFF");
+  printValue(SENS,"SENS");
+  printValue(X,"X");
 
-  Serial.print("Real Temperature in C = ");
-  Serial.println(TEMPREAL);
-
-  Serial.print("Compensated pressure in mbar = ");
-  Serial.println(PCOMP);
-  Serial.print("Compensated pressure in mmHg = ");
-  Serial.println(PCOMPHG);
+  printValue(TEMPREAL,"Temp °C");
+  printValue(PCOMP,"Pressure mBar");
+  printValue(PCOMPHG,"Pressure mmHg");
   
   Serial.println("************************************");
 
